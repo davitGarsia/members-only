@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
+const postRouter = require('./routes/postRoutes');
+
 const app = express();
 
 if (process.env.NODE_ENV === 'development') {
@@ -21,12 +23,14 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/api/v1/posts', postRouter);
+
 // Here will be routes
 
-//  After routes
-// app.all('*', (req, res, next) => {
-//   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-// });
+// After routes
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
 app.use(globalErrorHandler);
 
