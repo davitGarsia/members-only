@@ -38,6 +38,9 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!',
     },
   },
+  memberStatus: {
+    type: Boolean,
+  },
 });
 
 const User = mongoose.model('User', userSchema);
