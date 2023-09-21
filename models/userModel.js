@@ -41,6 +41,7 @@ const userSchema = new mongoose.Schema({
   memberStatus: {
     type: Boolean,
   },
+  passwordChangedAt: Date,
 });
 
 const User = mongoose.model('User', userSchema);
