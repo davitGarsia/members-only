@@ -19,7 +19,7 @@ const createSendToken = (user, statusCode, res) => {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
 
-    httpOnly: true,
+   httpOnly: true,
   };
 
   if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
@@ -39,6 +39,7 @@ const createSendToken = (user, statusCode, res) => {
 
 // Signup
 exports.signup = catchAsync(async (req, res, next) => {
+  console.log(req.body)
   const newUser = await User.create({
     name: req.body.name,
     lastName: req.body.lastName,
@@ -48,22 +49,25 @@ exports.signup = catchAsync(async (req, res, next) => {
   });
 
   createSendToken(newUser, 201, res);
+  
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { userName, password } = req.body;
 
-  if (!email || !password) {
-    return next(new AppError('Please, provide email and password', 400));
+  if (!userName || !password) {
+    return next(new AppError('Please, provide userName and password', 400));
   }
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ userName }).select('+password');
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Incorrect email or password', 401));
-  }
+  // if (!user || !(await user.correctPassword(password, user.password))) {
+  //   return next(new AppError('Incorrect userName or password', 401));
+  // }
 
   createSendToken(user, 200, res);
+  User.memberStatus = true;
+  console.log(User.memberStatus);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

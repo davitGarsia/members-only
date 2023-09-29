@@ -6,6 +6,7 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 
 const postRouter = require('./routes/postRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/user', userRouter);
 
 // Here will be routes
 
