@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please, enter the title for the post'],
   },
-  body: {
+  content: {
     type: String,
     required: [true, 'Please, write your post'],
   },

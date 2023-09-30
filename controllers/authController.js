@@ -77,15 +77,20 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
+    console.log(token);
   }
+
 
   if (!token) {
     return next(new AppError('You are not logged in', 401));
   }
 
-  const decoded = await promisify(jwt.verify(token, process.env.JWT_SECRET));
 
+  const decoded = await promisify(jwt.verify(token, process.env.JWT_SECRET));
+	console.log(decoded);
+  
   const currUser = await User.findById(decoded.id);
+  console.log(currUser);
   if (!currUser) {
     return next(
       new AppError('The user belonging to this token no longer exists', 401)
@@ -99,6 +104,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = currUser;
+  console.log(req.user);
 
   next();
 });

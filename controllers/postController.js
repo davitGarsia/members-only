@@ -15,13 +15,24 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
 });
 
 exports.createPost = catchAsync(async (req, res, next) => {
-  const newPost = await Post.create(req.body);
+	// Extract post data from the request body
+	const { title, content } = req.body;
 
-  res.status(201).json({
-    status: 'success',
-    data: {
-      post: newPost,
-    },
-  });
+	// Access the currently authenticated user from req.user
+	const createdBy = req.user._id; // Assuming your User model has an '_id' field
+
+	// Create the post and associate it with the user
+	const newPost = await Post.create({
+		title,
+		content,
+		createdBy, // Associate the post with the user
+	});
+
+	res.status(201).json({
+		status: 'success',
+		data: {
+			post: newPost,
+		},
+	});
 });
 
