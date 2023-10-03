@@ -4,8 +4,14 @@ const AppError = require('../utils/appError');
 const User = require('../models/userModel');
 
 exports.getAllPosts = catchAsync(async (req, res, next) => {
+  console.log(req.user)
+  let posts; 
 
-  const posts = await Post.find().select(["author"]);
+  if (req.user) {
+	posts = await Post.find()
+  } else {
+	posts = await Post.find().select(['-createdBy'])
+  }
 
   res.status(200).json({
     status: 'success',
@@ -17,20 +23,15 @@ exports.getAllPosts = catchAsync(async (req, res, next) => {
 });
 
 exports.createPost = catchAsync(async (req, res, next) => {
-	// Extract post data from the request body
 	const { title, content } = req.body;
 
-	// Access the currently authenticated user from req.user
-	const createdBy = req.user._id; // Assuming your User model has an '_id' field
-	console.log(createdBy)
-	//console.log(req)
-
-	// Create the post and associate it with the user
+	const createdBy = req.user._id;
 	const newPost = await Post.create({
 		title,
 		content,
-		createdBy, // Associate the post with the user
+		createdBy, 
 	});
+	//const jh = await Post.find().populate("user"); to reference another document
 
 	res.status(201).json({
 		status: 'success',

@@ -61,7 +61,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ userName }).select('+password');
 
-  // if (!user || !(await user.correctPassword(password, user.password))) {
+  //  if (!user || !(await user.correctPassword(password, user.password))) {
   //   return next(new AppError('Incorrect userName or password', 401));
   // }
 
@@ -69,6 +69,34 @@ exports.login = catchAsync(async (req, res, next) => {
   User.memberStatus = true;
   console.log(User.memberStatus);
 });
+
+exports.checkLogin = catchAsync(async (req, res, next) => {
+	// * if there is no user(req does not include user), req.user = undefined
+	// * if there is an user, currUser = req.user
+	// * like this: const currUser = await User.findById(decoded.id);
+	// * and then: req.user = currUser;
+
+  let token;
+  if (
+		req.headers.authorization &&
+		req.headers.authorization.startsWith('Bearer')
+	) {
+		token = req.headers.authorization.split(' ')[1];
+		console.log(token);
+	}
+
+  if (!token) {
+		return next();
+	}
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const currUser = await User.findById(decoded.id);
+
+  req.user = currUser;
+
+	next();
+
+})
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
