@@ -86,7 +86,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
 
-  const decoded = await promisify(jwt.verify(token, process.env.JWT_SECRET));
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
 	console.log(decoded);
   
   const currUser = await User.findById(decoded.id);
@@ -97,11 +97,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  if (currUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new AppError('User recently changed password, please log in again', 401)
-    );
-  }
+  // if (currUser.changedPasswordAfter(decoded.iat)) {
+  //   return next(
+  //     new AppError('User recently changed password, please log in again', 401)
+  //   );
+  // }
 
   req.user = currUser;
   console.log(req.user);
